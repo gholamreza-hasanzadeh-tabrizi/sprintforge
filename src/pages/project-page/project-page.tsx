@@ -1,5 +1,5 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Activity, BookOpen, CalendarDays, Grid2X2, History, List, MoreHorizontal, Plus, Settings2, UserRound, UserRoundPlus } from 'lucide-react'
+import { Activity, BookOpen, CalendarDays, Filter, Grid2X2, History, List, MoreHorizontal, Plus, Settings2, UserRound, UserRoundPlus } from 'lucide-react'
 import { initialIssues, people, statusMeta } from '@/data'
 import type { Issue, IssuePriority, IssueStatus, View } from '@/types/domain'
 import type { ProjectPageProps } from '@/types/components/pages/project-page'
@@ -16,6 +16,8 @@ import { BacklogView } from '@/components/organisms/backlog-view'
 import { MyWorkView } from '@/components/organisms/my-work-view'
 import { ActivityView } from '@/components/organisms/activity-view'
 import { CalendarView } from '@/components/organisms/calendar-view'
+import { FiltersView } from '@/components/organisms/filters-view'
+import { SettingsView } from '@/components/organisms/settings-view'
 import { cn } from '@/lib/utils'
 import { createId } from '@/lib/id'
 
@@ -46,6 +48,8 @@ const tabs: { id: View; label: string; Icon: typeof Grid2X2 }[] = [
   { id: 'my-work', label: 'My work', Icon: UserRound },
   { id: 'activity', label: 'Activity', Icon: History },
   { id: 'calendar', label: 'Calendar', Icon: CalendarDays },
+  { id: 'filters', label: 'Filters', Icon: Filter },
+  { id: 'settings', label: 'Settings', Icon: Settings2 },
 ]
 
 export function ProjectPage({ theme, onToggleTheme, onToast }: ProjectPageProps) {
@@ -161,17 +165,36 @@ export function ProjectPage({ theme, onToggleTheme, onToast }: ProjectPageProps)
 
   const resetDemo = useCallback(() => { setIssues(initialIssues); localStorage.removeItem('sprintforge-issues-v1'); onToast('Demo data restored') }, [onToast])
   const openCreate = useCallback(() => { setSelectedId(null); setDialogOpen(true) }, [])
+  const handleShare = useCallback(async () => {
+    try {
+      if (navigator.clipboard?.writeText) await navigator.clipboard.writeText(window.location.href)
+      else {
+        const field = document.createElement('textarea')
+        field.value = window.location.href
+        field.style.position = 'fixed'
+        field.style.opacity = '0'
+        document.body.appendChild(field)
+        field.select()
+        const copied = document.execCommand('copy')
+        field.remove()
+        if (!copied) throw new Error('Clipboard unavailable')
+      }
+      onToast('Project link copied to clipboard')
+    } catch { onToast('Copy the project link from your address bar') }
+  }, [onToast])
 
-  return <WorkspaceLayout view={view} theme={theme} onNavigate={setView} onToggleTheme={onToggleTheme} onToast={onToast}>
-    <div className="flex flex-wrap items-start justify-between gap-4"><div className="flex min-w-0 items-center gap-3"><div className="grid size-12 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-primary to-indigo-400 text-lg font-extrabold text-white shadow-md shadow-primary/20">N</div><div className="min-w-0"><p className="mb-1 text-[9px] font-bold tracking-[.15em] text-muted-foreground">PRODUCT DEVELOPMENT <span className="px-1">·</span> NOVA</p><h1 className="truncate font-[family-name:var(--font-display)] text-xl font-bold tracking-tight sm:text-2xl">Nova mobile app</h1><p className="mt-1 text-xs text-muted-foreground">A calmer way to bring your team’s best ideas to life.</p></div></div><div className="flex items-center gap-2"><AvatarStack names={people.slice(0, 4).map((person) => person.name)} onInvite={() => onToast('Invite flow is coming next')}/><Button variant="outline" size="sm" className="hidden sm:inline-flex" onClick={() => onToast('Sharing is a demo-only placeholder for the future API')}><UserRoundPlus size={14}/>Share</Button><Button variant="ghost" size="icon" aria-label="Restore sample data" title="Restore sample data" onClick={resetDemo}><MoreHorizontal size={18}/></Button></div></div>
-    <div className="mt-6 flex items-center gap-4 overflow-x-auto border-b border-border">{tabs.map(({ id, label, Icon }) => <button key={id} role="tab" aria-selected={view === id} onClick={() => setView(id)} className={cn('relative flex h-10 shrink-0 items-center gap-1.5 whitespace-nowrap text-xs text-muted-foreground transition hover:text-foreground', view === id && 'font-semibold text-primary after:absolute after:inset-x-0 after:bottom-[-1px] after:h-0.5 after:rounded-full after:bg-primary')}><Icon size={14}/>{label}{id === 'board' && <span className="rounded bg-muted px-1.5 py-0.5 text-[9px] text-muted-foreground">{issues.length}</span>}</button>)}<Button variant="ghost" size="icon" className="size-7" aria-label="Add view" onClick={() => onToast('Custom views are coming next')}><Plus size={15}/></Button><div className="ml-auto hidden items-center gap-3 pb-2 sm:flex"><span className="inline-flex items-center gap-1.5 text-[10px] text-muted-foreground"><span className="size-1.5 rounded-full bg-emerald-500"/>All changes saved</span><Button variant="ghost" size="sm" className="h-7 text-[10px] text-muted-foreground" onClick={() => onToast('View settings are coming next')}><Settings2 size={13}/>View settings</Button></div></div>
+  return <WorkspaceLayout view={view} myWorkCount={issues.filter((issue) => issue.assignee === 'Olivia Chen' && issue.status !== 'done').length} theme={theme} onNavigate={setView} onToggleTheme={onToggleTheme} onToast={onToast}>
+    <div className="flex flex-wrap items-start justify-between gap-4"><div className="flex min-w-0 items-center gap-3"><div className="grid size-12 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-primary to-indigo-400 text-lg font-extrabold text-white shadow-md shadow-primary/20">N</div><div className="min-w-0"><p className="mb-1 text-[9px] font-bold tracking-[.15em] text-muted-foreground">PRODUCT DEVELOPMENT <span className="px-1">·</span> NOVA</p><h1 className="truncate font-[family-name:var(--font-display)] text-xl font-bold tracking-tight sm:text-2xl">Nova mobile app</h1><p className="mt-1 text-xs text-muted-foreground">A calmer way to bring your team’s best ideas to life.</p></div></div><div className="flex items-center gap-2"><AvatarStack names={people.slice(0, 4).map((person) => person.name)} onInvite={() => onToast('Invite flow is coming next')}/><Button variant="outline" size="sm" className="hidden sm:inline-flex" onClick={handleShare}><UserRoundPlus size={14}/>Share</Button><Button variant="ghost" size="icon" aria-label="Restore sample data" title="Restore sample data" onClick={resetDemo}><MoreHorizontal size={18}/></Button></div></div>
+    <div className="mt-6 flex items-center gap-4 overflow-x-auto border-b border-border">{tabs.map(({ id, label, Icon }) => <button key={id} role="tab" aria-selected={view === id} onClick={() => setView(id)} className={cn('relative flex h-10 shrink-0 items-center gap-1.5 whitespace-nowrap text-xs text-muted-foreground transition hover:text-foreground', view === id && 'font-semibold text-primary after:absolute after:inset-x-0 after:bottom-[-1px] after:h-0.5 after:rounded-full after:bg-primary')}><Icon size={14}/>{label}{id === 'board' && <span className="rounded bg-muted px-1.5 py-0.5 text-[9px] text-muted-foreground">{issues.length}</span>}</button>)}<Button variant="ghost" size="icon" className="size-7" aria-label="Open saved filters" onClick={() => setView('filters')}><Plus size={15}/></Button><div className="ml-auto hidden items-center gap-3 pb-2 sm:flex"><span className="inline-flex items-center gap-1.5 text-[10px] text-muted-foreground"><span className="size-1.5 rounded-full bg-emerald-500"/>All changes saved</span><Button variant="ghost" size="sm" className="h-7 text-[10px] text-muted-foreground" onClick={() => setView('settings')}><Settings2 size={13}/>View settings</Button></div></div>
     {view === 'board' && <><div className="mt-4"><SprintSummary issues={issues} onMore={() => onToast('Sprint actions are coming next')}/></div><div className="my-4 flex flex-wrap items-center justify-between gap-2"><div className="flex min-w-0 flex-1 flex-wrap items-center gap-2"><SearchField inputRef={searchRef} value={query} onChange={setQuery}/><Select value={assignee} onChange={(event) => setAssignee(event.target.value)} aria-label="Filter by assignee" className="w-auto min-w-32 text-xs"><option value="all">All assignees</option>{people.map((person) => <option key={person.name}>{person.name}</option>)}</Select><Select value={priority} onChange={(event) => setPriority(event.target.value)} aria-label="Filter by priority" className="w-auto min-w-32 text-xs"><option value="all">All priorities</option>{priorities.map((item) => <option key={item}>{item}</option>)}</Select><Button variant="ghost" size="sm" className="h-9 px-2 text-xs text-muted-foreground" onClick={() => { setAssignee('all'); setPriority('all'); setQuery('') }}>Clear</Button></div><div className="flex items-center gap-1.5"><Button variant="outline" size="icon" className="size-9" aria-label="Sort issues" onClick={handleSort}><List size={15}/></Button><Button variant="outline" size="sm" className="hidden h-9 sm:inline-flex" onClick={() => onToast('Automation rules are coming next')}><Activity size={14}/>Automate</Button><Button size="sm" className="h-9" onClick={openCreate}><Plus size={15}/>Create issue</Button></div></div><IssueBoard issues={filteredIssues} onOpen={handleOpenIssue} onMove={handleMove} onCreate={openCreate} onToast={onToast}/></>}
     {view === 'list' && <div className="mt-5"><div className="mb-3 flex flex-wrap items-center gap-2"><SearchField inputRef={searchRef} value={query} onChange={setQuery}/><Select value={assignee} onChange={(event) => setAssignee(event.target.value)} aria-label="Filter by assignee" className="w-auto min-w-32 text-xs"><option value="all">All assignees</option>{people.map((person) => <option key={person.name}>{person.name}</option>)}</Select><Button size="sm" onClick={openCreate}><Plus size={14}/>Create issue</Button></div><IssueList issues={filteredIssues} onOpen={handleOpenIssue} onSort={handleSort}/></div>}
     {view === 'backlog' && <div className="mt-5"><BacklogView issues={filteredIssues} onOpen={handleOpenIssue} onCreate={openCreate} onToast={onToast}/></div>}
-    {view === 'reports' && <div className="mt-5"><Suspense fallback={<div className="h-64 animate-pulse rounded-lg bg-muted"/>}><ReportsView issues={issues} onToast={onToast}/></Suspense></div>}
+    {view === 'reports' && <div className="mt-5"><Suspense fallback={<div className="h-64 animate-pulse rounded-lg bg-muted"/>}><ReportsView issues={issues} onToast={onToast} onOpen={handleOpenIssue} onViewActivity={() => setView('activity')}/></Suspense></div>}
     {view === 'my-work' && <div className="mt-5"><MyWorkView issues={issues} onOpen={handleOpenIssue}/></div>}
     {view === 'activity' && <div className="mt-5"><ActivityView issues={issues} onOpen={handleOpenIssue}/></div>}
     {view === 'calendar' && <div className="mt-5"><CalendarView issues={issues} onOpen={handleOpenIssue}/></div>}
+    {view === 'filters' && <div className="mt-5"><FiltersView issues={issues} onOpen={handleOpenIssue}/></div>}
+    {view === 'settings' && <div className="mt-5"><SettingsView theme={theme} onToggleTheme={onToggleTheme} onRestoreSample={resetDemo}/></div>}
     <footer className="mt-7 flex items-center justify-between text-[10px] text-muted-foreground"><span className="inline-flex items-center gap-1.5"><span className="size-1.5 rounded-full bg-emerald-500"/>SprintForge demo workspace</span><span className="hidden items-center gap-1 sm:flex">Made for teams who make things happen <span className="text-violet-400">✦</span></span></footer>
     <IssueDialog open={dialogOpen} issue={selectedIssue} onOpenChange={handleCloseDialog} onSave={handleSave} onAddComment={handleAddComment} onToggleWatch={handleToggleWatch} onAddSubtask={handleAddSubtask} onToggleSubtask={handleToggleSubtask} onDeleteSubtask={handleDeleteSubtask} onToast={onToast}/>
   </WorkspaceLayout>

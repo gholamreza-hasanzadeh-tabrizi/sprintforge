@@ -65,8 +65,8 @@ Avoid deep relative imports (`../../...`) inside `src`. A component's `index.ts`
 
 ## Workspace sections
 
-The main navigation includes dedicated `MyWorkView`, `ActivityView`, and `CalendarView` organisms. My Work groups Olivia Chen’s issues by status and highlights due dates; Activity aggregates the project timeline and opens the related issue; Calendar supports month navigation and links due-date entries to issue details. Seed issues include a few rolling sample due dates so the calendar is useful immediately.
+The main navigation includes dedicated `MyWorkView`, `ActivityView`, `CalendarView`, `FiltersView`, and `SettingsView` organisms. My Work groups Olivia Chen’s issues by status and computes the sidebar count from current data; Activity aggregates live issue events; Calendar supports month navigation and links due-date entries to issue details; Filters supports presets and browser-persisted custom filters; Settings handles theme switching and restoring sample issues. Seed issues include rolling due dates so the calendar is useful immediately.
 
 ## Issue workflow
 
-The detail dialog composes issue fields, `SubtaskList`, activity/comment feeds, and the comment composer. It supports adding/deleting/completing subtasks, watching/unwatching issues, comments, and field edits. State is local-only for now. The browser test for `ProjectPage` covers the watcher/subtask persistence path; component tests cover UI states, comment workflows, and the new workspace sections.
+The detail dialog composes issue fields, `SubtaskList`, activity/comment feeds, and the comment composer. It supports adding/deleting/completing subtasks, watching/unwatching issues, comments, and field edits. Reports derive their status distribution and recent activity from current issues, and export issue data as CSV. The Share action copies the current project URL but does not grant remote access. State is local-only for now. Tests cover the watcher/subtask persistence path, filters, reports/export, settings, calendar navigation, and comment workflows.

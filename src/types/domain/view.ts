@@ -1,1 +1,1 @@
-export type View = 'board' | 'list' | 'backlog' | 'reports' | 'my-work' | 'activity' | 'calendar'
+export type View = 'board' | 'list' | 'backlog' | 'reports' | 'my-work' | 'activity' | 'calendar' | 'filters' | 'settings'
