@@ -1,0 +1,8 @@
+import { Bell, CircleHelp, Moon, Sun } from 'lucide-react'
+import type { AppHeaderProps } from '@/types/components/organisms/app-header'
+import { Avatar } from '@/components/atoms/avatar'
+import { Button } from '@/components/atoms/button'
+
+export function AppHeader({ theme, onToggleTheme, onToast }: AppHeaderProps) {
+  return <header className="sticky top-0 z-10 flex h-14 items-center justify-between border-b border-border bg-background/90 px-4 backdrop-blur-md sm:px-7"><div className="flex items-center gap-2 text-xs text-muted-foreground"><span>Projects</span><span className="text-border">/</span><span className="inline-flex items-center gap-1.5 font-medium text-foreground"><span className="grid size-5 place-items-center rounded bg-primary text-[10px] font-bold text-primary-foreground">N</span>Nova mobile app</span><span className="hidden text-border sm:inline">/</span><span className="hidden text-foreground sm:inline">Board</span></div><div className="flex items-center gap-1.5"><Button variant="ghost" size="icon" aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'} onClick={onToggleTheme}>{theme === 'dark' ? <Sun size={17}/> : <Moon size={17}/>}</Button><Button variant="ghost" size="icon" aria-label="Help" onClick={() => onToast('SprintForge project planning demo')}><CircleHelp size={17}/></Button><Button variant="ghost" size="icon" className="relative" aria-label="Notifications" onClick={() => onToast('You’re all caught up')}><Bell size={17}/><span className="absolute right-2 top-2 size-1.5 rounded-full bg-rose-500 ring-2 ring-background"/></Button><span className="mx-1 h-5 border-l border-border"/><Avatar name="Olivia Chen" size="sm"/></div></header>
+}
