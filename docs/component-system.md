@@ -63,6 +63,10 @@ Avoid deep relative imports (`../../...`) inside `src`. A component's `index.ts`
 - `IssueTypeMark` and `PriorityMark`: consistent semantic icons.
 - `Skeleton`: theme-aware loading placeholder.
 
+## Workspace sections
+
+The main navigation includes dedicated `MyWorkView`, `ActivityView`, and `CalendarView` organisms. My Work groups Olivia Chen’s issues by status and highlights due dates; Activity aggregates the project timeline and opens the related issue; Calendar supports month navigation and links due-date entries to issue details. Seed issues include a few rolling sample due dates so the calendar is useful immediately.
+
 ## Issue workflow
 
-The detail dialog composes issue fields, `SubtaskList`, activity/comment feeds, and the comment composer. It supports adding/deleting/completing subtasks, watching/unwatching issues, comments, and field edits. State is local-only for now. The browser test for `ProjectPage` covers the watcher/subtask persistence path; component tests cover UI states and comment workflows.
+The detail dialog composes issue fields, `SubtaskList`, activity/comment feeds, and the comment composer. It supports adding/deleting/completing subtasks, watching/unwatching issues, comments, and field edits. State is local-only for now. The browser test for `ProjectPage` covers the watcher/subtask persistence path; component tests cover UI states, comment workflows, and the new workspace sections.

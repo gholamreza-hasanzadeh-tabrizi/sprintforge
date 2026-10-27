@@ -5,11 +5,12 @@ A frontend-only project-planning workspace built with React and TypeScript. It b
 ## Features
 
 - Board, list, backlog, and sprint-insights views
+- Dedicated My Work, project Activity, and due-date Calendar sections
 - Drag issues between board columns; view a Jira-inspired issue detail panel
 - Edit issue metadata, labels, due date, story points, and description
 - Activity timeline and persistent comments
 - Watch/unwatch issues and add, complete, or delete subtasks
-- Search, assignee and priority filters, and browser-local persistence
+- Search, assignee and priority filters, upcoming due dates, and browser-local persistence
 - Light/dark themes, responsive layout, keyboard focus states, and accessible Radix Dialog
 
 Navigation controls that are not in the feature list may still be demo placeholders. There is no authentication, remote collaboration, file upload, or server API.
