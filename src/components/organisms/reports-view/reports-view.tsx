@@ -31,8 +31,9 @@ function relativeTime(value: string) {
 function exportReport(issues: ReportsViewProps['issues'], onToast: ReportsViewProps['onToast']) {
   const columns = ['Issue', 'Summary', 'Status', 'Priority', 'Type', 'Assignee', 'Story points', 'Labels', 'Due date']
   const escape = (value: string | number) => `"${String(value).replaceAll('"', '""')}"`
-  const rows = issues.map((issue) => [issue.id, issue.title, issue.status, issue.priority, issue.type, issue.assignee, issue.points, issue.labels.join('; '), issue.due ?? ''])
-  const csv = [columns, ...rows].map((row) => row.map(escape).join(',')).join('\r\n')
+  const rows = issues.map((issue) => [issue.id, issue.title, statusMeta[issue.status].label, issue.priority, issue.type, issue.assignee, issue.points, issue.labels.join('; '), issue.due ?? ''])
+  // A BOM keeps non-ASCII text readable when the file is opened in Excel.
+  const csv = `\uFEFF${[columns, ...rows].map((row) => row.map(escape).join(',')).join('\r\n')}`
   const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }))
   const link = document.createElement('a')
   link.href = url
@@ -40,7 +41,8 @@ function exportReport(issues: ReportsViewProps['issues'], onToast: ReportsViewPr
   document.body.appendChild(link)
   link.click()
   link.remove()
-  URL.revokeObjectURL(url)
+  // Revoking in the same tick cancels the download in Firefox and Safari.
+  window.setTimeout(() => URL.revokeObjectURL(url), 0)
   onToast('CSV report downloaded')
 }
 

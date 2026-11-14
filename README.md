@@ -10,9 +10,9 @@ A frontend-only project-planning workspace built with React and TypeScript. It b
 - Drag issues between board columns; open an issue detail panel from lists, calendar, activity, and filters
 - Create and edit issue metadata, labels, due dates, story points, descriptions, and status
 - Persistent comments, watchers, subtasks, and activity timeline
-- Search and assignee/priority filters, plus reusable saved filters with quick presets
+- Search and assignee/priority filters, plus reusable saved filters (status, priority, assignee, and text search) with quick presets
 - Export issue data as CSV; copy the project URL to share it
-- Light/dark theme controls and restore-demo-data action in workspace settings
+- Light/dark theme controls and a confirmed restore-demo-data action in workspace settings
 - Responsive layouts, keyboard focus states, and accessible Radix Dialog behavior
 
 Everything is a local demo: copied links do not grant access to other users. There is no authentication, remote collaboration, invitations, file upload, or server API yet. Sprint assignment and automation rules also remain outside this frontend-only version.

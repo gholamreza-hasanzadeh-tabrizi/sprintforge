@@ -65,7 +65,7 @@ Avoid deep relative imports (`../../...`) inside `src`. A component's `index.ts`
 
 ## Workspace sections
 
-The main navigation includes dedicated `MyWorkView`, `ActivityView`, `CalendarView`, `FiltersView`, and `SettingsView` organisms. My Work groups Olivia Chen’s issues by status and computes the sidebar count from current data; Activity aggregates live issue events; Calendar supports month navigation and links due-date entries to issue details; Filters supports presets and browser-persisted custom filters; Settings handles theme switching and restoring sample issues. Seed issues include rolling due dates so the calendar is useful immediately.
+The main navigation includes dedicated `MyWorkView`, `ActivityView`, `CalendarView`, `FiltersView`, and `SettingsView` organisms. My Work groups Olivia Chen’s issues by status and computes the sidebar count from current data; Activity aggregates live issue events; Calendar supports month navigation and links due-date entries to issue details; Filters supports presets and browser-persisted custom filters with an optional text query; Settings handles theme switching and restoring sample issues and saved filters behind a confirmation step. Seed issues include rolling due dates so the calendar is useful immediately.
 
 ## Issue workflow
 
