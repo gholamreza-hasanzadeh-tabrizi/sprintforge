@@ -29,4 +29,19 @@ describe('ProjectPage issue workflow', () => {
       expect(issue.activity.some((event) => event.action === 'commented')).toBe(true)
     })
   })
+
+  it('clears saved filters only after the restore action is confirmed', async () => {
+    const user = userEvent.setup()
+    localStorage.setItem('sprintforge-saved-filters-v1', JSON.stringify([{ id: 'f1', name: 'Mine', status: 'all', priority: 'all', assignee: 'all', query: '' }]))
+    render(<ProjectPage theme="light" onToggleTheme={vi.fn()} onToast={vi.fn()}/>)
+
+    await user.click(screen.getByRole('tab', { name: /Settings/ }))
+    // Only the settings card exposes the destructive action; the old header "···" shortcut is gone.
+    const restore = screen.getByRole('button', { name: 'Restore sample data' })
+    await user.click(restore)
+    expect(localStorage.getItem('sprintforge-saved-filters-v1')).not.toBeNull()
+
+    await user.click(screen.getByRole('button', { name: 'Yes, restore sample data' }))
+    await waitFor(() => expect(localStorage.getItem('sprintforge-saved-filters-v1')).toBeNull())
+  })
 })
